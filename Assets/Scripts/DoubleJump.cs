@@ -10,6 +10,7 @@ public class DoubleJump : MonoBehaviour {
 	float jumpForce = 500f, moveSpeed = 5f;
 
 	Rigidbody2D rb;
+	Collision2D col;
 
 	bool doubleJumpAllowed = false;
 	bool onTheGround = false;
@@ -18,14 +19,26 @@ public class DoubleJump : MonoBehaviour {
 	void Start () {
 		rb = GetComponent<Rigidbody2D> ();
 	}
-	
+
+	void OnCollisionEnter(Collision collision){
+    Debug.Log("Entered");
+		if (collision.gameObject.CompareTag("Ground"))
+		{
+			onTheGround = true;
+		}
+	}
+
+	void OnCollisionExit(Collision collision){
+    Debug.Log("Exited");
+		if (collision.gameObject.CompareTag("Ground"))
+		{
+			onTheGround = false;
+		}
+	}
+		
 	// Update is called once per frame
 	void Update () {
 		
-		if (rb.velocity.y == 0)
-			onTheGround = true;
-		else
-			onTheGround = false;
 		
 		if (onTheGround)
 			doubleJumpAllowed = true;

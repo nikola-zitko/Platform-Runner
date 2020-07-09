@@ -14,29 +14,45 @@ public class BasicMovement : MonoBehaviour
     Rigidbody2D rb;
 
     bool doubleJumpAllowed = false;
-    bool onTheGround = false;
+    bool onTheGround = true;
+
 
     void Start(){
         rb = GetComponent<Rigidbody2D> ();
+        
+        
     }
 
-    void Update (){
-        if (rb.velocity.y == 0){
-            onTheGround = true;
-        }
-        else{
-            onTheGround = false;
+
+    void OnCollisionEnter2D(Collision2D collision){
+        
+            if (collision.gameObject.tag == "Ground")
+            {
+                onTheGround = true;
+                animator.SetLayerWeight(1,0);
+                doubleJumpAllowed = true;
+            }
         }
 
-        if(onTheGround){
-            doubleJumpAllowed = true;
+	void OnCollisionExit2D(Collision2D collision){
+        
+            if (collision.gameObject.tag == "Ground")
+            {
+                onTheGround = false;
+            }
         }
+
+    void Update (){
+        
 
         if(onTheGround && Input.GetButtonDown("Jump")) {
             Jump();
+            animator.SetLayerWeight(1,1);
+            
         }
         else if(doubleJumpAllowed && Input.GetButtonDown("Jump")){
             Jump();
+            animator.SetLayerWeight(1,1);
             doubleJumpAllowed = false;
         }
 
@@ -68,6 +84,7 @@ public class BasicMovement : MonoBehaviour
         }
     
     void Jump(){
+        
         rb.velocity = new Vector2(rb.velocity.x, 0f);
         rb.AddForce (Vector2.up * jumpForce);
         if(facingRight){
